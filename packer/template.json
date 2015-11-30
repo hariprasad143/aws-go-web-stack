@@ -37,7 +37,7 @@
     {
       "type": "shell",
       "execute_command": "echo 'packer' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
-      "scripts": ["packer/scripts/go-binary.sh", "packer/scripts/cfn-helpers.sh"],
+      "scripts": ["packer/scripts/go-binary.sh"],
       "environment_vars": [
         "PACKAGE={{user `app_repo`}}"
       ]

@@ -74,9 +74,17 @@ make stack-delete
 
 
 ## To Do
-- create dedicated VPC and subnets for stack in cfm template
-- split cfm template into vpc stack and app stack
-- create private subnets for app stack
-- turn packer golang shell provisioner into cookbook
-- build a chroot EBS AMI with packer for faster deployments
-- add check to prevent re-baking image if app source code has not changed
+
+- image baking
+	- use system d as init process for app and remove bootstrapping in cfm launch config
+	- turn packer golang shell provisioner into cookbook + add logic for creating binary (ie don't rely on app repo's makefile for this)
+	- build a chroot EBS AMI for faster deployments
+	- add check to prevent re-baking image if app source code has not changed
+
+- cloudformation
+	- create dedicated VPC and subnets for stack in cfm template
+	- split cfm template into vpc stack and app stack
+	- create private subnets for app stack
+	- better logic around handling stack updates
+	- add cloudwatch logs
+	- add cpu based scaling up and down policies to auto scaling group
