@@ -1,0 +1,46 @@
+{
+  "variables": {
+    "commit": "{{env `GIT_COMMIT`}}",
+    "project": "aws-go-web-stack",
+    "user_ssh": "ubuntu",
+    "app_repo": "github.com/techjacker/go-server-best-buy",
+    "app_port": "8484"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "eu-west-1",
+    "source_ami": "ami-87cb11f4",
+    "instance_type": "t2.micro",
+    "ssh_username": "{{user `user_ssh`}}",
+    "ami_name": "{{user `project`}}-{{isotime | clean_ami_name}}",
+    "ami_description": "{{user `commit`}}"
+  }],
+  "provisioners": [
+    {
+      "type": "chef-solo",
+      "cookbook_paths": [
+        "packer/site-cookbooks",
+        "packer/vendor/cookbooks"
+      ],
+      "run_list": [
+        "apt",
+        "golang",
+        "nginx",
+        "gowebserver"
+      ],
+      "json": {
+        "gowebserver":{
+          "port": "{{user `app_port`}}"
+        }
+      }
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'packer' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "scripts": ["packer/scripts/go-binary.sh", "packer/scripts/cfn-helpers.sh"],
+      "environment_vars": [
+        "PACKAGE={{user `app_repo`}}"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+.DS_Store
+.vagrant
+*.sublime-*
+tmp
+packer/vendor
+packer/build.log
