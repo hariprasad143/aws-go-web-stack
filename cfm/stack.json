@@ -20,8 +20,7 @@
   	},
   	"AppPort": {
       "Type" : "String",
-      "Description" : "port that the go application is running on",
-      "Default" : "8484"
+      "Description" : "port that the go application is running on"
   	},
     "Subnets" : {
       "Type" : "List<AWS::EC2::Subnet::Id>",
@@ -71,6 +70,7 @@
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
       "Properties" : {
         "AssociatePublicIpAddress" : "true",
+        "KeyName": "ago default",
         "ImageId" : { "Ref" : "AMIID" },
         "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
         "InstanceType" : { "Ref" : "InstanceType" },
@@ -91,11 +91,11 @@
         "Subnets" : { "Ref" : "Subnets" },
         "Listeners" : [ {
           "LoadBalancerPort" : "80",
-          "InstancePort" : "80",
+          "InstancePort" : { "Ref" : "AppPort" },
           "Protocol" : "HTTP"
         } ],
         "HealthCheck" : {
-          "Target" : "HTTP:80/",
+          "Target" : { "Fn::Join" : [ ":", ["TCP", { "Ref" : "AppPort" }] ] },
           "HealthyThreshold" : "3",
           "UnhealthyThreshold" : "5",
           "Interval" : "30",
@@ -132,7 +132,7 @@
         "SecurityGroupIngress" : [
           {
           	"IpProtocol" :"tcp",
-          	"FromPort" : "80", "ToPort" : "80",
+          	"FromPort" : { "Ref" : "AppPort" }, "ToPort" : { "Ref" : "AppPort" },
           	"SourceSecurityGroupId" : { "Ref" : "LoadBalancerSecurityGroup" }
           }
         ]

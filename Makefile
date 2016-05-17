@@ -44,6 +44,20 @@ stack-create: stack-validate
 			"ParameterKey=AMIID,ParameterValue=$(shell make ami-latest)" \
 			"ParameterKey=VPCID,ParameterValue=$(shell make params-vpcid)" \
 			"ParameterKey=Subnets,ParameterValue=$(shell make params-subnetid)" \
+			"ParameterKey=AppPort,ParameterValue=$(APP_PORT)" \
+			"ParameterKey=AZs,ParameterValue=$(shell make params-az)"
+
+stack-update: stack-validate
+	@echo "Stack creation in progress."
+	@echo "This will take a few minutes..."
+	@aws cloudformation update-stack \
+		--stack-name $(STACK_NAME) \
+		--template-body file:///$(PWD)/$(CFM_TEMPLATE) \
+		--parameters \
+			"ParameterKey=AMIID,ParameterValue=$(shell make ami-latest)" \
+			"ParameterKey=VPCID,ParameterValue=$(shell make params-vpcid)" \
+			"ParameterKey=Subnets,ParameterValue=$(shell make params-subnetid)" \
+			"ParameterKey=AppPort,ParameterValue=$(APP_PORT)" \
 			"ParameterKey=AZs,ParameterValue=$(shell make params-az)"
 
 stack-delete:
